@@ -1,3 +1,5 @@
+Currently entirely non-functional.
+
 # tree-sitter-mdx
 
 To install dependencies:
