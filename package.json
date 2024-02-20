@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "nan": "^2.18.0",
+    "tree-sitter-cli": "^0.21.0-pre-release-1"
+  },
+  "name": "tree-sitter-mdx",
+  "module": "index.ts",
+  "type": "packagejs",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "main": "bindings/node"
+}

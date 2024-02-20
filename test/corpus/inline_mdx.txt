@@ -1,0 +1,17 @@
+==================
+Return statements
+==================
+
+export const Thing = () => <>World</>
+
+# Hello <Thing />
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (primitive_type)
+    (block
+      (return_statement (number)))))
