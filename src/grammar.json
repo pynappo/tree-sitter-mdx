@@ -1,9 +1,92 @@
 {
   "name": "mdx",
   "rules": {
-    "source_file": {
-      "type": "STRING",
-      "value": "hello"
+    "document": {
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "section"
+      }
+    },
+    "section": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "standalone_jsx"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "markdown"
+        }
+      ]
+    },
+    "standalone_jsx": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "import_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "export_statement"
+        }
+      ]
+    },
+    "import_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "import_start"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "statement_body"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "semicolon"
+        }
+      ]
+    },
+    "export_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "export_start"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "statement_body"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "semicolon"
+        }
+      ]
+    },
+    "import_start": {
+      "type": "PATTERN",
+      "value": "import"
+    },
+    "export_start": {
+      "type": "PATTERN",
+      "value": "export"
+    },
+    "statement_body": {
+      "type": "PATTERN",
+      "value": "[^;]*"
+    },
+    "semicolon": {
+      "type": "PATTERN",
+      "value": ";"
+    },
+    "markdown": {
+      "type": "PATTERN",
+      "value": "markdown"
     }
   },
   "extras": [
@@ -18,3 +101,4 @@
   "inline": [],
   "supertypes": []
 }
+

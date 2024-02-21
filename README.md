@@ -14,4 +14,10 @@ To run:
 bun run index.ts
 ```
 
-This project was created using `bun init` in bun v1.0.27. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+# Idea
+
+The basic idea is to primarily use the markdown parser besides for text in:
+
+- Curly braces
+- HTML blocks
+- Bare import/export lines.
