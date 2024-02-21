@@ -1,6 +1,7 @@
 module.exports = grammar({
   name: "mdx",
   rules: {
+    word: $ => $.identifier,
     document: ($) => repeat($.section),
     section: ($) => choice($.standalone_jsx, $.markdown),
     standalone_jsx: ($) => choice($.import_statement, $.export_statement),
@@ -11,5 +12,6 @@ module.exports = grammar({
     statement_body: ($) => /[^;]*/,
     semicolon: ($) => /;/,
     markdown: ($) => /markdown/,
+    identifier: $ => /[a-z_]+/
   },
 });

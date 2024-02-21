@@ -1,6 +1,10 @@
 {
   "name": "mdx",
   "rules": {
+    "word": {
+      "type": "SYMBOL",
+      "name": "identifier"
+    },
     "document": {
       "type": "REPEAT",
       "content": {
@@ -87,6 +91,10 @@
     "markdown": {
       "type": "PATTERN",
       "value": "markdown"
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[a-z_]+"
     }
   },
   "extras": [
@@ -101,4 +109,3 @@
   "inline": [],
   "supertypes": []
 }
-
