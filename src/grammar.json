@@ -1,10 +1,6 @@
 {
   "name": "mdx",
   "rules": {
-    "word": {
-      "type": "SYMBOL",
-      "name": "identifier"
-    },
     "document": {
       "type": "REPEAT",
       "content": {
@@ -22,21 +18,25 @@
         {
           "type": "SYMBOL",
           "name": "markdown"
+        },
+        {
+          "type": "CHOICE",
+          "members": []
         }
       ]
     },
     "standalone_jsx": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "import_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "export_statement"
-        }
-      ]
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "import_statement"
+          }
+        ]
+      }
     },
     "import_statement": {
       "type": "SEQ",
@@ -46,29 +46,48 @@
           "name": "import_start"
         },
         {
-          "type": "SYMBOL",
-          "name": "statement_body"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "{"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "}"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
-          "name": "semicolon"
-        }
-      ]
-    },
-    "export_statement": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "export_start"
+          "name": "string"
         },
         {
-          "type": "SYMBOL",
-          "name": "statement_body"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "semicolon"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "semicolon"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -82,7 +101,7 @@
     },
     "statement_body": {
       "type": "PATTERN",
-      "value": "[^;]*"
+      "value": "[^;]+"
     },
     "semicolon": {
       "type": "PATTERN",
@@ -90,11 +109,48 @@
     },
     "markdown": {
       "type": "PATTERN",
-      "value": "markdown"
+      "value": "[a-z\\ ]+"
+    },
+    "word": {
+      "type": "SYMBOL",
+      "name": "identifier"
     },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-z_]+"
+      "value": "[a-z_]+[a-z_0-9]*"
+    },
+    "string": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "double_quoted_string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "single_quoted_string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "backtick_quoted_string"
+        }
+      ]
+    },
+    "double_quoted_string": {
+      "type": "PATTERN",
+      "value": "\".*\""
+    },
+    "single_quoted_string": {
+      "type": "PATTERN",
+      "value": "'.*'"
+    },
+    "backtick_quoted_string": {
+      "type": "PATTERN",
+      "value": "`.*`"
+    },
+    "_newline_token": {
+      "type": "PATTERN",
+      "value": "\\n|\\r\\n?"
     }
   },
   "extras": [
@@ -109,3 +165,4 @@
   "inline": [],
   "supertypes": []
 }
+

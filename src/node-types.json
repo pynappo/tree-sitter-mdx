@@ -1,22 +1,14 @@
 [
   {
-    "type": "export_statement",
+    "type": "document",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "export_start",
-          "named": true
-        },
-        {
-          "type": "semicolon",
-          "named": true
-        },
-        {
-          "type": "statement_body",
+          "type": "section",
           "named": true
         }
       ]
@@ -31,6 +23,10 @@
       "required": true,
       "types": [
         {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "import_start",
           "named": true
         },
@@ -39,7 +35,7 @@
           "named": true
         },
         {
-          "type": "statement_body",
+          "type": "string",
           "named": true
         }
       ]
@@ -73,10 +69,6 @@
       "required": true,
       "types": [
         {
-          "type": "export_statement",
-          "named": true
-        },
-        {
           "type": "import_statement",
           "named": true
         }
@@ -84,7 +76,7 @@
     }
   },
   {
-    "type": "word",
+    "type": "string",
     "named": true,
     "fields": {},
     "children": {
@@ -92,14 +84,26 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "backtick_quoted_string",
+          "named": true
+        },
+        {
+          "type": "double_quoted_string",
+          "named": true
+        },
+        {
+          "type": "single_quoted_string",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "export_start",
+    "type": "backtick_quoted_string",
+    "named": true
+  },
+  {
+    "type": "double_quoted_string",
     "named": true
   },
   {
@@ -119,7 +123,15 @@
     "named": true
   },
   {
-    "type": "statement_body",
+    "type": "single_quoted_string",
     "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
   }
 ]
