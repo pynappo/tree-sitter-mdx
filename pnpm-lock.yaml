@@ -8,9 +8,6 @@ dependencies:
   nan:
     specifier: ^2.18.0
     version: 2.18.0
-  tree-sitter-cli:
-    specifier: ^0.21.0-pre-release-1
-    version: 0.21.0
   typescript:
     specifier: ^5.0.0
     version: 5.3.3
@@ -19,6 +16,9 @@ devDependencies:
   '@types/bun':
     specifier: latest
     version: 1.0.6
+  tree-sitter-cli:
+    specifier: ^0.21.0
+    version: 0.21.0
 
 packages:
 
@@ -55,7 +55,7 @@ packages:
     resolution: {integrity: sha512-wA7wT5724fNQW82XDH6zT6ZcYonjrAKLCHHuhLsPcAKULrhp3rNuMvlgBdB5FUBvmjHNhtTZF/qpHenMoRJPBw==}
     hasBin: true
     requiresBuild: true
-    dev: false
+    dev: true
 
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}

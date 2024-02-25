@@ -1,35 +1,73 @@
+/// <reference types="tree-sitter-cli/dsl" />
 module.exports = grammar({
   name: "mdx",
-  precedence: ($) => [[$.markdown_section, $.jsx_section]],
+  precedence: ($) => [
+    [$.jsx_section, $.markdown_section],
+    [$.interpolation, $.word]
+  ],
+  externals: $ => [
+    $.import_start,
+    $.interpolation_start,
+    $.interpolation_end,
+    $.markdown,
+    $.eof
+    // $.markdown
+  ],
+  extras: $ => [
+    /[^/S/r/n]+/
+  ],
   rules: {
     document: ($) =>
       seq(
-        optional($.jsx_section),
-        optional($.markdown_section),
+        choice($.jsx_section, $.markdown_section),
         repeat(
           seq(
             $.newline_token,
-            choice(seq($.newline_token, $.newline_token, $.jsx_section)),
-            $.markdown_section,
+            $.newline_token,
+            choice($.jsx_section, $.markdown_section),
           ),
         ),
       ),
-    jsx_section: ($) => seq(choice($.import_statement), $.newline_token),
-    markdown_section: ($) => repeat1(seq(choice(/[^\r\n]+/))),
+    // lines that start with import or export
+    jsx_section: ($) => repeat1(seq(choice($.import_statement, $.html_component, $.jsx_component), $.newline_token)),
+    // 1 or more non-empty lines
+    markdown_section: ($) => repeat1(
+      seq(
+        choice(
+          $.interpolation,
+          $.markdown_text,
+        ),
+      )
+    ),
+    interpolation: ($) => seq(
+      $.interpolation_start, /.*/, $.interpolation_end
+    ),
+    markdown_text: ($) => seq(repeat1(/\S+/), $.newline_token),
     import_statement: ($) =>
       seq(
         $.import_start,
-        repeat(
-          choice($.identifier, "{", "}", seq(",", optional($.newline_token))),
+        optional(
+          seq(
+            choice(
+              seq(
+                alias(/\{/, $.left_brace),
+                repeat(choice($.identifier, ',')),
+                alias(/\}/, $.right_brace),
+              ),
+              $.identifier,
+            ),
+            "from",
+          )
         ),
         $.string,
         optional($.semicolon),
       ),
-    import_start: ($) => token.immediate(/import/),
-    export_start: ($) => /export/,
-    statement_body: ($) => /[^;]+/,
+    html_component: ($) => choice(
+
+    ),
+    jsx_component: ($) => seq(/[^\\]</, /.+/, /[^\\]\/>/),
     semicolon: ($) => /;/,
-    word: ($) => $.identifier,
+    word: ($) => /[/S]+/,
     identifier: ($) => /[a-zA-z_]+[A-Za-z_0-9]*/,
     string: ($) =>
       choice(
@@ -42,7 +80,7 @@ module.exports = grammar({
     backtick_quoted_string: ($) => /`.*`/,
 
     // taken from markdown
-    newline_token: ($) => /\n|\r\n?/,
-    _horizontal_whitespace: ($) => /[^\S\r\n]+/,
+    newline_token: ($) => token.immediate(/\n|\r\n?/),
+    // _horizontal_whitespace: $ => token.immediate(/[^/S/r/n]+/),
   },
 });
