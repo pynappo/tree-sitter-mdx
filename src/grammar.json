@@ -8,6 +8,21 @@
           "type": "CHOICE",
           "members": [
             {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "end_of_line"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
               "type": "SYMBOL",
               "name": "jsx_section"
             },
@@ -24,11 +39,14 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "newline_token"
+                "name": "end_of_line"
               },
               {
-                "type": "SYMBOL",
-                "name": "newline_token"
+                "type": "REPEAT1",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "end_of_line"
+                }
               },
               {
                 "type": "CHOICE",
@@ -72,17 +90,17 @@
           },
           {
             "type": "SYMBOL",
-            "name": "newline_token"
+            "name": "end_of_line"
           }
         ]
       }
     },
     "markdown_section": {
-      "type": "REPEAT1",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT1",
+          "content": {
             "type": "CHOICE",
             "members": [
               {
@@ -91,12 +109,16 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "markdown_text"
+                "name": "markdown_word"
               }
             ]
           }
-        ]
-      }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_of_line"
+        }
+      ]
     },
     "interpolation": {
       "type": "SEQ",
@@ -106,28 +128,23 @@
           "name": "interpolation_start"
         },
         {
-          "type": "PATTERN",
-          "value": ".*"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\}]+"
+          },
+          "named": true,
+          "value": "interpolation_content"
         },
         {
-          "type": "PATTERN",
-          "value": "\\}"
+          "type": "SYMBOL",
+          "name": "interpolation_end"
         }
       ]
     },
-    "markdown_text": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "REPEAT1",
-        "content": {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "\\S+\\s+"
-          }
-        }
-      }
+    "markdown_word": {
+      "type": "PATTERN",
+      "value": "[^\\{\\s]+"
     },
     "import_statement": {
       "type": "SEQ",
@@ -253,21 +270,25 @@
       "value": "[a-zA-z_]+[A-Za-z_0-9]*"
     },
     "string": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "double_quoted_string"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "single_quoted_string"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "backtick_quoted_string"
-        }
-      ]
+      "type": "FIELD",
+      "name": "type",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "double_quoted_string"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "single_quoted_string"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "backtick_quoted_string"
+          }
+        ]
+      }
     },
     "double_quoted_string": {
       "type": "PATTERN",
@@ -281,12 +302,21 @@
       "type": "PATTERN",
       "value": "`.*`"
     },
-    "newline_token": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "\\n|\\r\\n?"
-      }
+    "end_of_line": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\n|\\r\\n?"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "eof"
+        }
+      ]
     }
   },
   "extras": [
@@ -308,6 +338,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "interpolation_end"
+    },
+    {
+      "type": "SYMBOL",
       "name": "markdown"
     },
     {
@@ -318,3 +352,4 @@
   "inline": [],
   "supertypes": []
 }
+

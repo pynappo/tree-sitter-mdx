@@ -8,15 +8,30 @@
       "required": true,
       "types": [
         {
+          "type": "end_of_line",
+          "named": true
+        },
+        {
           "type": "jsx_section",
           "named": true
         },
         {
           "type": "markdown_section",
           "named": true
-        },
+        }
+      ]
+    }
+  },
+  {
+    "type": "end_of_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
         {
-          "type": "newline_token",
+          "type": "eof",
           "named": true
         }
       ]
@@ -67,9 +82,17 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "interpolation_content",
+          "named": true
+        },
+        {
+          "type": "interpolation_end",
+          "named": true
+        },
         {
           "type": "interpolation_start",
           "named": true
@@ -91,6 +114,10 @@
       "required": true,
       "types": [
         {
+          "type": "end_of_line",
+          "named": true
+        },
+        {
           "type": "html_component",
           "named": true
         },
@@ -100,10 +127,6 @@
         },
         {
           "type": "jsx_component",
-          "named": true
-        },
-        {
-          "type": "newline_token",
           "named": true
         }
       ]
@@ -118,42 +141,42 @@
       "required": true,
       "types": [
         {
+          "type": "end_of_line",
+          "named": true
+        },
+        {
           "type": "interpolation",
           "named": true
         },
         {
-          "type": "markdown_text",
+          "type": "markdown_word",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "markdown_text",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "string",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "backtick_quoted_string",
-          "named": true
-        },
-        {
-          "type": "double_quoted_string",
-          "named": true
-        },
-        {
-          "type": "single_quoted_string",
-          "named": true
-        }
-      ]
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "backtick_quoted_string",
+            "named": true
+          },
+          {
+            "type": "double_quoted_string",
+            "named": true
+          },
+          {
+            "type": "single_quoted_string",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -169,6 +192,10 @@
     "named": true
   },
   {
+    "type": "eof",
+    "named": true
+  },
+  {
     "type": "from",
     "named": false
   },
@@ -181,6 +208,14 @@
     "named": true
   },
   {
+    "type": "interpolation_content",
+    "named": true
+  },
+  {
+    "type": "interpolation_end",
+    "named": true
+  },
+  {
     "type": "interpolation_start",
     "named": true
   },
@@ -189,7 +224,7 @@
     "named": true
   },
   {
-    "type": "newline_token",
+    "type": "markdown_word",
     "named": true
   },
   {

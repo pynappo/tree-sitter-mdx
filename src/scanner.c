@@ -13,7 +13,7 @@ enum TokenType {
   IMPORT_START,
   INTERPOLATION_START,
   INTERPOLATION_END,
-  _EOF,
+  END_OF_FILE,
   MARKDOWN,
 };
 
@@ -88,11 +88,12 @@ static bool match(TSLexer *lexer, char* str) {
 int i = 0;
 bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
-  // printf("%d, %c\n", i++, lexer->lookahead);
+  printf("%d, %d, %c\n", i++, lexer->get_column(lexer), lexer->lookahead);
   if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
     s->indentation = 0;
     return false;
   }
+  if (iswspace(lexer->lookahead)) return false;
 
   if (valid_symbols[IMPORT_START] || !(s->indentation)) {
     // the extra space is mandatory
@@ -108,6 +109,8 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (lexer->lookahead == '{') {
       lexer->result_symbol = INTERPOLATION_START;
+      advance(lexer);
+      lexer->mark_end(lexer);
       return true;
     }
   }
@@ -116,15 +119,18 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (lexer->lookahead == "\\"){
       return false;
     }
-    if (lexer->lookahead == '{') {
-      lexer->result_symbol = INTERPOLATION_START;
+    if (lexer->lookahead == '}') {
+      lexer->result_symbol = INTERPOLATION_END;
+      advance(lexer);
+      lexer->mark_end(lexer);
       return true;
     }
   }
 
-  if (valid_symbols[_EOF]) {
+  if (valid_symbols[END_OF_FILE]) {
     if (lexer->eof) {
-      lexer->result_symbol = _EOF;
+      lexer->result_symbol = END_OF_FILE;
+      lexer->mark_end(lexer);
       return true;
     }
   }
