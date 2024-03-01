@@ -1,4 +1,5 @@
 #include "tree_sitter/parser.h"
+#include "tree_sitter/alloc.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdint.h>
@@ -51,7 +52,7 @@ static void deserialize(Scanner *s, const char *buffer, unsigned length) {
 
 // largely taken from markdown's scanner
 void *tree_sitter_mdx_external_scanner_create(void) {
-  Scanner *s = (Scanner *)malloc(sizeof(Scanner));
+  Scanner *s = (Scanner *)ts_malloc(sizeof(Scanner));
   deserialize(s, NULL, 0);
 
   return s;
@@ -77,7 +78,7 @@ void tree_sitter_mdx_external_scanner_destroy(void *payload) {
 
 static bool match(TSLexer *lexer, char* str) {
   for (int i = 0; i < strlen(str); i++) {
-    if (lexer->lookahead != str[i]) {
+    if (lexer->lookahead != str[i] || lexer->eof(lexer)) {
       return false;
     }
     advance(lexer);
@@ -128,7 +129,7 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const 
   }
 
   if (valid_symbols[END_OF_FILE]) {
-    if (lexer->eof) {
+    if (lexer->eof(lexer)) {
       lexer->result_symbol = END_OF_FILE;
       lexer->mark_end(lexer);
       return true;
