@@ -1,5 +1,6 @@
 #include "tree_sitter/parser.h"
 #include "tree_sitter/alloc.h"
+#include "tree_sitter/array.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdint.h>
@@ -15,7 +16,7 @@ enum TokenType {
   INTERPOLATION_START,
   INTERPOLATION_END,
   END_OF_FILE,
-  MARKDOWN,
+  ERROR,
 };
 
 typedef struct {
@@ -29,15 +30,16 @@ static void advance(TSLexer *lexer) {
 static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 // for debugging:
-// #define advance(lexer) {\
-//   printf("advance %c, L%d\n", lexer->lookahead, __LINE__);\
-//   advance(lexer);\
-// }
-//
-// #define skip(lexer) {\
-//   printf("skip %c, L%d\n", lexer->lookahead, __LINE__);\
-//   skip(lexer);\
-// }
+
+#define advance(lexer) {\
+  printf("advance %c, L%d\n", lexer->lookahead, __LINE__);\
+  advance(lexer);\
+}
+
+#define skip(lexer) {\
+  printf("skip %c, L%d\n", lexer->lookahead, __LINE__);\
+  skip(lexer);\
+}
 
 static unsigned serialize(Scanner *s, char *buffer) {
   unsigned size = 0;
@@ -89,7 +91,11 @@ static bool match(TSLexer *lexer, char* str) {
 int i = 0;
 bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
+  if (iswspace(lexer->lookahead)) printf("whitespace");
   printf("%d, %d, %c\n", i++, lexer->get_column(lexer), lexer->lookahead);
+  if (valid_symbols[ERROR]) {
+    printf("ERROR %d, %d, %c\n", i++, lexer->get_column(lexer), lexer->lookahead);
+  }
   if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
     s->indentation = 0;
     return false;
@@ -100,6 +106,7 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const 
     // the extra space is mandatory
     if (match(lexer, "import ")) {
       lexer->result_symbol = IMPORT_START;
+      lexer->mark_end(lexer);
       return true;
     }
   }
@@ -117,15 +124,14 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer, const 
   }
 
   if (valid_symbols[INTERPOLATION_END]) {
-    if (lexer->lookahead == "\\"){
-      return false;
-    }
+    printf("interpend");
     if (lexer->lookahead == '}') {
       lexer->result_symbol = INTERPOLATION_END;
       advance(lexer);
       lexer->mark_end(lexer);
       return true;
     }
+    advance(lexer);
   }
 
   if (valid_symbols[END_OF_FILE]) {

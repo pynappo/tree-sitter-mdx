@@ -128,13 +128,21 @@
           "name": "interpolation_start"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "PATTERN",
-            "value": "[^\\}]+"
-          },
-          "named": true,
-          "value": "interpolation_content"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": ".+"
+              },
+              "named": true,
+              "value": "interpolation_content"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -342,14 +350,13 @@
     },
     {
       "type": "SYMBOL",
-      "name": "markdown"
+      "name": "eof"
     },
     {
       "type": "SYMBOL",
-      "name": "eof"
+      "name": "error"
     }
   ],
   "inline": [],
   "supertypes": []
 }
-

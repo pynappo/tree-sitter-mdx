@@ -9,8 +9,8 @@ module.exports = grammar({
     $.import_start,
     $.interpolation_start,
     $.interpolation_end,
-    $.markdown,
     $.eof,
+    $.error,
     // $.markdown
   ],
   extras: ($) => [/[^/S/r/n]+/],
@@ -41,7 +41,7 @@ module.exports = grammar({
     interpolation: ($) =>
       seq(
         $.interpolation_start,
-        alias(/[^\}]+/, $.interpolation_content), // temp
+        optional(alias(/.+/, $.interpolation_content)), // temp
         $.interpolation_end,
       ),
     markdown_word: ($) => /[^\{\s]+/,
