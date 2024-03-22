@@ -19,10 +19,19 @@ enum TokenType {
   ERROR,
 };
 
+enum Delimiter {
+  PAREN,
+  BACKTICK,
+  DOUBLE_QUOTE,
+  SINGLE_QUOTE,
+};
+
 typedef struct {
   uint8_t indentation;
   bool escape_following_char;
+  Array(enum Delimiter) delimiter_stack;
 } Scanner;
+
 static void advance(TSLexer *lexer) {
   lexer->advance(lexer, false);
 }
@@ -30,21 +39,24 @@ static void advance(TSLexer *lexer) {
 static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 // for debugging:
-
-#define advance(lexer) {\
-  printf("advance %c, L%d\n", lexer->lookahead, __LINE__);\
-  advance(lexer);\
-}
-
-#define skip(lexer) {\
-  printf("skip %c, L%d\n", lexer->lookahead, __LINE__);\
-  skip(lexer);\
-}
+//
+// #define advance(lexer) {\
+//   printf("advance %c, L%d\n", lexer->lookahead, __LINE__);\
+//   advance(lexer);\
+// }
+//
+// #define skip(lexer) {\
+//   printf("skip %c, L%d\n", lexer->lookahead, __LINE__);\
+//   skip(lexer);\
+// }
 
 static unsigned serialize(Scanner *s, char *buffer) {
   unsigned size = 0;
   buffer[size++] = (char)s->indentation;
   buffer[size++] = (bool)s->escape_following_char;
+  for (int i = 0; i < s->delimiter_stack.size; i++) {
+  
+  }
   return size;
 }
 
@@ -55,6 +67,7 @@ static void deserialize(Scanner *s, const char *buffer, unsigned length) {
 // largely taken from markdown's scanner
 void *tree_sitter_mdx_external_scanner_create(void) {
   Scanner *s = (Scanner *)ts_malloc(sizeof(Scanner));
+  s->delimiter_stack = ts_malloc(sizeof(Array(enum Delimiter)));
   deserialize(s, NULL, 0);
 
   return s;
