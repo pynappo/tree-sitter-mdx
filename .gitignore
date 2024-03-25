@@ -178,4 +178,4 @@ dist
 #tree-sitter artifacts
 parser*
 *.obj
-Package.swift
+log.html
