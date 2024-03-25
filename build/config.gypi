@@ -332,6 +332,7 @@
       "lib/readline.js",
       "lib/readline/promises.js",
       "lib/repl.js",
+      "lib/sea.js",
       "lib/stream.js",
       "lib/stream/consumers.js",
       "lib/stream/promises.js",
@@ -385,6 +386,7 @@
     "shlib_suffix": "so.120",
     "single_executable_application": "true",
     "target_arch": "x64",
+    "use_prefix_to_find_headers": "false",
     "v8_enable_31bit_smis_on_64bit_arch": 0,
     "v8_enable_extensible_ro_snapshot": 0,
     "v8_enable_gdbjit": 0,
@@ -407,12 +409,12 @@
     "v8_trace_maps": 0,
     "v8_use_siphash": 1,
     "want_separate_host_toolset": 0,
-    "nodedir": "/home/dle/.cache/node-gyp/21.6.2",
+    "nodedir": "/home/dle/.cache/node-gyp/21.7.1",
     "python": "/usr/bin/python3",
     "standalone_static_library": 1,
     "cache": "/home/dle/.cache/npm",
     "local_prefix": "/home/dle/code/tree-sitter-mdx/",
-    "user_agent": "bun/1.0.27 npm/? node/v21.6.0 linux x64",
-    "node_gyp": "/tmp/.17b678e94dda7d7b-00000005.node-gyp/node-gyp"
+    "user_agent": "bun/1.0.33 npm/? node/v21.6.0 linux x64",
+    "node_gyp": "/tmp/.17bfd614e174bdbd-00000005.node-gyp/node-gyp"
   }
 }

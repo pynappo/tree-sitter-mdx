@@ -184,6 +184,10 @@
     "named": false
   },
   {
+    "type": "_",
+    "named": false
+  },
+  {
     "type": "backtick_quoted_string",
     "named": true
   },
@@ -194,10 +198,6 @@
   {
     "type": "eof",
     "named": true
-  },
-  {
-    "type": "from",
-    "named": false
   },
   {
     "type": "identifier",

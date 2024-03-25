@@ -1,18 +1,20 @@
 /// <reference types="tree-sitter-cli/dsl" />
 module.exports = grammar({
   name: "mdx",
-  precedence: ($) => [
+  conflicts: ($) => [],
+  precedences: ($) => [
     [$.jsx_section, $.markdown_section],
     [$.interpolation, $.markdown_word],
   ],
   externals: ($) => [
     $.import_start,
     $.interpolation_start,
-    $.interpolation_end,
+    $.interpolation_content,
     $.eof,
     $.error,
     // $.markdown
   ],
+  // anything that isn't a whitespace or newline
   extras: ($) => [/[^/S/r/n]+/],
   rules: {
     document: ($) =>
@@ -41,8 +43,8 @@ module.exports = grammar({
     interpolation: ($) =>
       seq(
         $.interpolation_start,
-        optional(alias(/[^\}]+/, $.interpolation_content)), // temp
-        $.interpolation_end,
+        optional($.interpolation_content), // temp
+        alias(/\}/, $.interpolation_end),
       ),
     markdown_word: ($) => /[^\{\s]+/,
     import_statement: ($) =>
@@ -58,12 +60,13 @@ module.exports = grammar({
               ),
               $.identifier,
             ),
-            "from",
+            /from/,
           ),
         ),
         $.string,
         optional($.semicolon),
       ),
+    // TODO
     html_component: ($) => choice(),
     jsx_component: ($) => seq(/[^\\]</, /.+/, /[^\\]\/>/),
     semicolon: ($) => /;/,
@@ -84,6 +87,7 @@ module.exports = grammar({
 
     // taken from markdown
     end_of_line: ($) => choice(token.immediate(/\n|\r\n?/), $.eof),
+    fallback: (_) => prec.dynamic(-100, "_"),
     // _horizontal_whitespace: $ => token.immediate(/[^/S/r/n]+/),
   },
 });

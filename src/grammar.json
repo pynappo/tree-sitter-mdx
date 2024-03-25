@@ -131,13 +131,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "PATTERN",
-                "value": "[^\\}]+"
-              },
-              "named": true,
-              "value": "interpolation_content"
+              "type": "SYMBOL",
+              "name": "interpolation_content"
             },
             {
               "type": "BLANK"
@@ -145,8 +140,13 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "interpolation_end"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\}"
+          },
+          "named": true,
+          "value": "interpolation_end"
         }
       ]
     },
@@ -216,7 +216,7 @@
                   ]
                 },
                 {
-                  "type": "STRING",
+                  "type": "PATTERN",
                   "value": "from"
                 }
               ]
@@ -325,6 +325,14 @@
           "name": "eof"
         }
       ]
+    },
+    "fallback": {
+      "type": "PREC_DYNAMIC",
+      "value": -100,
+      "content": {
+        "type": "STRING",
+        "value": "_"
+      }
     }
   },
   "extras": [
@@ -334,7 +342,28 @@
     }
   ],
   "conflicts": [],
-  "precedences": [],
+  "precedences": [
+    [
+      {
+        "type": "SYMBOL",
+        "name": "jsx_section"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "markdown_section"
+      }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "interpolation"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "markdown_word"
+      }
+    ]
+  ],
   "externals": [
     {
       "type": "SYMBOL",
@@ -346,7 +375,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "interpolation_end"
+      "name": "interpolation_content"
     },
     {
       "type": "SYMBOL",

@@ -37,14 +37,14 @@ CFLAGS_CC_Debug := \
 	-std=gnu++17
 
 INCS_Debug := \
-	-I/home/dle/.cache/node-gyp/21.6.2/include/node \
-	-I/home/dle/.cache/node-gyp/21.6.2/src \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/openssl/config \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/openssl/openssl/include \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/uv/include \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/zlib \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/v8/include \
-	-I$(srcdir)/node_modules/.pnpm/nan@2.18.0/node_modules/nan \
+	-I/home/dle/.cache/node-gyp/21.7.1/include/node \
+	-I/home/dle/.cache/node-gyp/21.7.1/src \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/openssl/config \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/openssl/openssl/include \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/uv/include \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/zlib \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/v8/include \
+	-I$(srcdir)/node_modules/nan \
 	-I$(srcdir)/src
 
 DEFS_Release := \
@@ -80,14 +80,14 @@ CFLAGS_CC_Release := \
 	-std=gnu++17
 
 INCS_Release := \
-	-I/home/dle/.cache/node-gyp/21.6.2/include/node \
-	-I/home/dle/.cache/node-gyp/21.6.2/src \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/openssl/config \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/openssl/openssl/include \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/uv/include \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/zlib \
-	-I/home/dle/.cache/node-gyp/21.6.2/deps/v8/include \
-	-I$(srcdir)/node_modules/.pnpm/nan@2.18.0/node_modules/nan \
+	-I/home/dle/.cache/node-gyp/21.7.1/include/node \
+	-I/home/dle/.cache/node-gyp/21.7.1/src \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/openssl/config \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/openssl/openssl/include \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/uv/include \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/zlib \
+	-I/home/dle/.cache/node-gyp/21.7.1/deps/v8/include \
+	-I$(srcdir)/node_modules/nan \
 	-I$(srcdir)/src
 
 OBJS := \
