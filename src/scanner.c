@@ -110,9 +110,7 @@ static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
       }
       break;
     case '"':
-      [[fallthrough]];
     case '\'':
-      [[fallthrough]];
     case '`':
       scan_js_string(scanner, lexer, lexer->lookahead);
       break;
