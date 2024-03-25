@@ -29,7 +29,6 @@ enum Delimiter {
 typedef Array(enum Delimiter) DelimiterStack;
 typedef struct Scanner {
   // uint8_t indentation;
-  bool escape_following_char;
   DelimiterStack *delimiter_stack;
 } Scanner;
 
@@ -84,7 +83,7 @@ static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
     printf("delimstack should not be populated");
     return false;
   }
-  while (delim_stack->size > 0) {
+  do {
     // advance until we pop the full stack of delimiters
 
     if (lexer->eof(lexer)) {
@@ -96,6 +95,7 @@ static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
     }
     switch (lexer->lookahead) {
     case '\\':
+      // consume next char
       advance(lexer);
       break;
     case '{':
@@ -103,36 +103,32 @@ static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
       break;
     case '}':
       if (array_back(delim_stack) == CURLY_BRACKET) {
-        if (delim_stack->size == 1) {
-          // if it's the final one we stop the text there
-          lexer->mark_end(lexer);
-        }
         array_pop(delim_stack);
+        // leave the last curly to the grammar
+        if (delim_stack->size == 0)
+          goto finish;
       }
       break;
     case '"':
-      // array_push(delim_stack, DOUBLE_QUOTE);
-      scan_js_string(scanner, lexer, '"');
-      break;
+      [[fallthrough]];
     case '\'':
-      // array_push(delim_stack, SINGLE_QUOTE);
-      scan_js_string(scanner, lexer, '\'');
-      break;
+      [[fallthrough]];
     case '`':
-      // array_push(delim_stack, BACKTICK);
-      scan_js_string(scanner, lexer, '`');
+      scan_js_string(scanner, lexer, lexer->lookahead);
       break;
     default:
       break;
     }
     advance(lexer);
-  }
+  } while (delim_stack->size > 0);
+
+finish:
+  lexer->result_symbol = INTERPOLATION_TEXT;
   return true;
 }
 
 // largely taken from markdown's scanner
 void *tree_sitter_mdx_external_scanner_create() {
-  printf("hi");
   Scanner *s = (Scanner *)ts_malloc(sizeof(Scanner));
   s->delimiter_stack = ts_malloc(sizeof(DelimiterStack));
   array_init(s->delimiter_stack);
@@ -142,11 +138,8 @@ void *tree_sitter_mdx_external_scanner_create() {
 
 unsigned tree_sitter_mdx_external_scanner_serialize(void *payload,
                                                     char *buffer) {
-  printf("hi");
   Scanner *s = (Scanner *)payload;
   unsigned size = 0;
-  // buffer[size++] = (char)s->indentation;
-  buffer[size++] = (bool)s->escape_following_char;
   for (int i = 0; i < s->delimiter_stack->size; i++) {
     char delim = *array_get(s->delimiter_stack, i);
     buffer[size++] = delim;
@@ -155,18 +148,15 @@ unsigned tree_sitter_mdx_external_scanner_serialize(void *payload,
 }
 void tree_sitter_mdx_external_scanner_deserialize(void *payload, char *buffer,
                                                   unsigned length) {
-  printf("hi");
   Scanner *scanner = (Scanner *)payload;
   unsigned size = 0;
   array_init(scanner->delimiter_stack);
-  scanner->escape_following_char = (bool)buffer[size++];
   while (size < length) {
     enum Delimiter d = (enum Delimiter)buffer[size++];
     array_push(scanner->delimiter_stack, d);
   }
 }
 void tree_sitter_mdx_external_scanner_destroy(void *payload) {
-  printf("hi");
   Scanner *scanner = (Scanner *)payload;
   array_delete(scanner->delimiter_stack);
   ts_free(scanner);
@@ -201,7 +191,6 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
       return false;
     } else if (lexer->lookahead == '{') {
       lexer->result_symbol = INTERPOLATION_START;
-      array_push(scanner->delimiter_stack, CURLY_BRACKET);
       advance(lexer);
       lexer->mark_end(lexer);
       return true;
@@ -211,7 +200,7 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
   if (valid_symbols[INTERPOLATION_TEXT]) {
     // scan until the interpolation ends
     if (lexer->lookahead == '}') {
-      // let the grammar count this as optional
+      // let the grammar figure out that INTERPOLATION_TEXT is not here instead
       return false;
     }
     return scan_js_expr(scanner, lexer);

@@ -4,13 +4,13 @@ Single import
 import Button from '../components/Button.astro';
 
 ---
-(document [0, 0] - [1, 0]
- (standalone_jsx [0, 0] - [1, 0]
-  (import_statement [0, 0] - [0, 48]
-   (import_start [0, 0] - [0, 6])
-   (identifier [0, 7] - [0, 13])
-   (identifier [0, 14] - [0, 18])
-   (string [0, 19] - [0, 47]
-    (single_quoted_string [0, 19] - [0, 47]))
-   (semicolon [0, 47] - [0, 48]))
-   (newline_token [0, 48] - [1, 0])))
+
+(document
+  (jsx_section
+    (import_statement
+      (import_start)
+      (identifier)
+      (string
+        (single_quoted_string))
+      (semicolon))
+    (end_of_line)))

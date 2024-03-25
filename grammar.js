@@ -4,7 +4,7 @@ module.exports = grammar({
   conflicts: ($) => [],
   precedences: ($) => [
     [$.jsx_section, $.markdown_section],
-    [$.interpolation, $.markdown_word],
+    [$.escaped_slash, $.interpolation, $.markdown_word],
   ],
   externals: ($) => [
     $.import_start,
@@ -39,7 +39,10 @@ module.exports = grammar({
       ),
     // 1 or more non-empty lines
     markdown_section: ($) =>
-      seq(repeat1(choice($.interpolation, $.markdown_word)), $.end_of_line),
+      seq(
+        repeat1(choice($.escaped_slash, $.interpolation, $.markdown_word)),
+        $.end_of_line,
+      ),
     interpolation: ($) =>
       seq(
         $.interpolation_start,
@@ -47,6 +50,7 @@ module.exports = grammar({
         alias(/\}/, $.interpolation_end),
       ),
     markdown_word: ($) => /[^\{\s]+/,
+    escaped_slash: ($) => /\\\{/,
     import_statement: ($) =>
       seq(
         $.import_start,
@@ -55,23 +59,21 @@ module.exports = grammar({
             choice(
               seq(
                 alias(/\{/, $.left_brace),
-                repeat(choice($.identifier, ",")),
+                repeat(choice($.jsx_identifier, ",")),
                 alias(/\}/, $.right_brace),
               ),
-              $.identifier,
+              $.jsx_identifier,
             ),
             /from/,
           ),
         ),
         $.string,
-        optional($.semicolon),
+        alias(/;/, $.semicolon),
       ),
     // TODO
     html_component: ($) => choice(),
     jsx_component: ($) => seq(/[^\\]</, /.+/, /[^\\]\/>/),
-    semicolon: ($) => /;/,
-    word: ($) => /[/S]+/,
-    identifier: ($) => /[a-zA-z_]+[A-Za-z_0-9]*/,
+    jsx_identifier: ($) => /[$a-zA-z_]+[A-Za-z_0-9$]*/,
     string: ($) =>
       field(
         "type",
@@ -86,8 +88,8 @@ module.exports = grammar({
     backtick_quoted_string: ($) => /`.*`/,
 
     // taken from markdown
-    end_of_line: ($) => choice(token.immediate(/\n|\r\n?/), $.eof),
-    fallback: (_) => prec.dynamic(-100, "_"),
+    end_of_line: ($) => token.immediate(/\n|\r\n?/),
+    // fallback: (_) => prec.dynamic(-100, "_"),
     // _horizontal_whitespace: $ => token.immediate(/[^/S/r/n]+/),
   },
 });
