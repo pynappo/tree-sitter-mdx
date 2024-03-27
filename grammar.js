@@ -12,15 +12,14 @@ module.exports = grammar({
     $.interpolation_content,
     $.eof,
     $.error,
-    // $.markdown
   ],
-  // anything that isn't a whitespace or newline
+  // any non-newline whitespace
   extras: ($) => [/[^/S/r/n]+/],
+  word: ($) => [/[/S]+/],
   rules: {
     document: ($) =>
       seq(
-        optional(repeat1($.end_of_line)),
-        choice($.jsx_section, $.markdown_section),
+        optional(choice($.jsx_section, $.markdown_section)),
         repeat(
           seq(
             $.end_of_line,
@@ -29,7 +28,6 @@ module.exports = grammar({
           ),
         ),
       ),
-    // lines that start with import or export
     jsx_section: ($) =>
       repeat1(
         seq(
@@ -46,17 +44,19 @@ module.exports = grammar({
     interpolation: ($) =>
       seq(
         $.interpolation_start,
-        optional($.interpolation_content), // temp
+        optional($.interpolation_content), // let the scanner determine everything
         alias(/\}/, $.interpolation_end),
       ),
     markdown_word: ($) => /[^\{\s]+/,
     escaped_slash: ($) => /\\\{/,
     import_statement: ($) =>
       seq(
+        // import at the start of the line
         $.import_start,
         optional(
           seq(
             choice(
+              // either {foo, possible_bar} or just foo
               seq(
                 alias(/\{/, $.left_brace),
                 repeat(choice($.jsx_identifier, ",")),
@@ -67,14 +67,14 @@ module.exports = grammar({
             /from/,
           ),
         ),
-        $.string,
+        $.jsx_string,
         alias(/;/, $.semicolon),
       ),
     // TODO
     html_component: ($) => choice(),
     jsx_component: ($) => seq(/[^\\]</, /.+/, /[^\\]\/>/),
     jsx_identifier: ($) => /[$a-zA-z_]+[A-Za-z_0-9$]*/,
-    string: ($) =>
+    jsx_string: ($) =>
       field(
         "type",
         choice(
