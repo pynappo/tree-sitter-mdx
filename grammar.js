@@ -5,6 +5,7 @@ module.exports = grammar({
   precedences: ($) => [
     [$.jsx_section, $.markdown_section],
     [$.escaped_slash, $.interpolation, $.markdown_word],
+    [$.end_of_line, $.interpolation_start],
   ],
   externals: ($) => [
     $.import_start,
@@ -15,15 +16,15 @@ module.exports = grammar({
   ],
   // any non-newline whitespace
   extras: ($) => [/[^/S/r/n]+/],
-  word: ($) => [/[/S]+/],
+  // word: ($) => $._word,
   rules: {
     document: ($) =>
       seq(
         optional(choice($.jsx_section, $.markdown_section)),
         repeat(
           seq(
-            $.end_of_line,
-            repeat1($.end_of_line),
+            $.new_line,
+            repeat1($.new_line),
             choice($.jsx_section, $.markdown_section),
           ),
         ),
@@ -32,14 +33,14 @@ module.exports = grammar({
       repeat1(
         seq(
           choice($.import_statement, $.html_component, $.jsx_component),
-          $.end_of_line,
+          $.new_line,
         ),
       ),
     // 1 or more non-empty lines
     markdown_section: ($) =>
       seq(
         repeat1(choice($.escaped_slash, $.interpolation, $.markdown_word)),
-        $.end_of_line,
+        $.new_line,
       ),
     interpolation: ($) =>
       seq(
@@ -47,7 +48,7 @@ module.exports = grammar({
         optional($.interpolation_content), // let the scanner determine everything
         alias(/\}/, $.interpolation_end),
       ),
-    markdown_word: ($) => /[^\{\s]+/,
+    markdown_word: ($) => /[\S][^\{\s\r\n]+/,
     escaped_slash: ($) => /\\\{/,
     import_statement: ($) =>
       seq(
@@ -88,8 +89,9 @@ module.exports = grammar({
     backtick_quoted_string: ($) => /`.*`/,
 
     // taken from markdown
-    end_of_line: ($) => token.immediate(/\n|\r\n?/),
+    new_line: ($) => token.immediate(/\n|\r\n/),
     // fallback: (_) => prec.dynamic(-100, "_"),
     // _horizontal_whitespace: $ => token.immediate(/[^/S/r/n]+/),
+    _word: ($) => /[/S]+/,
   },
 });

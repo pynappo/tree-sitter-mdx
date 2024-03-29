@@ -8,27 +8,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "REPEAT1",
-              "content": {
-                "type": "SYMBOL",
-                "name": "end_of_line"
-              }
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "jsx_section"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "markdown_section"
+                }
+              ]
             },
             {
               "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "jsx_section"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "markdown_section"
             }
           ]
         },
@@ -156,7 +149,7 @@
     },
     "markdown_word": {
       "type": "PATTERN",
-      "value": "[^\\{\\s]+"
+      "value": "[\\S][^\\{\\s\\r\\n]+"
     },
     "escaped_slash": {
       "type": "PATTERN",
@@ -236,7 +229,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "string"
+          "name": "jsx_string"
         },
         {
           "type": "ALIAS",
@@ -274,7 +267,7 @@
       "type": "PATTERN",
       "value": "[$a-zA-z_]+[A-Za-z_0-9$]*"
     },
-    "string": {
+    "jsx_string": {
       "type": "FIELD",
       "name": "type",
       "content": {
@@ -311,8 +304,12 @@
       "type": "IMMEDIATE_TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "\\n|\\r\\n?"
+        "value": "\\n|\\r\\n"
       }
+    },
+    "_word": {
+      "type": "PATTERN",
+      "value": "[/S]+"
     }
   },
   "extras": [
@@ -345,6 +342,16 @@
       {
         "type": "SYMBOL",
         "name": "markdown_word"
+      }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "end_of_line"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "interpolation_start"
       }
     ]
   ],

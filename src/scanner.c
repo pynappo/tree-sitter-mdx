@@ -89,7 +89,6 @@ static void scan_js_string(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
         }
     } else {
-        advance(lexer);
         while (lexer->lookahead != delim) {
             advance(lexer);
             if (lexer->lookahead == '\\') {
@@ -103,11 +102,7 @@ static void scan_js_string(Scanner *scanner, TSLexer *lexer) {
 static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
     // TODO: Implement comments
     DelimiterStack *delim_stack = scanner->delimiter_stack;
-    if (delim_stack->size > 0) {
-        // something went wrong
-        printf("delimstack should not be populated");
-        return false;
-    }
+    int starting_size = delim_stack->size;
     do {
         // advance until we pop the full stack of delimiters
 
@@ -120,37 +115,38 @@ static bool scan_js_expr(Scanner *scanner, TSLexer *lexer) {
         }
         switch (lexer->lookahead) {
         case '\\':
+            // consume backslash
+            advance(lexer);
             // consume next char
             advance(lexer);
             break;
         case '{':
             array_push(delim_stack, CURLY_BRACKET);
+            advance(lexer);
             break;
         case '}':
             if (array_back(delim_stack) == CURLY_BRACKET) {
-                printf("popped a curly");
                 array_pop(delim_stack);
                 // leave the last curly to the grammar
-                if (delim_stack->size == 0)
+                if (delim_stack->size == starting_size)
                     goto finish;
             }
-            printf("still isn't a curly");
+            advance(lexer);
             break;
         case '"':
             //[[fallthrough]]
         case '\'':
             //[[fallthrough]]
         case '`':
+            // consume the whole string
             scan_js_string(scanner, lexer);
             break;
         default:
             break;
         }
-        advance(lexer);
     } while (delim_stack->size > 0);
 
 finish:
-    lexer->result_symbol = INTERPOLATION_TEXT;
     return true;
 }
 
@@ -191,8 +187,19 @@ void tree_sitter_mdx_external_scanner_destroy(void *payload) {
 
 bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
                                            const bool *valid_symbols) {
+
+    printf("\nINPUT: %c\n", lexer->lookahead);
+    // clang-format off
+    printf("valid symbols:\n");
+    printf("IMPORT_START: %s\n", valid_symbols[IMPORT_START] ? "true" : "false");
+    printf("INTERPOLATION_START: %s\n", valid_symbols[INTERPOLATION_START] ? "true" : "false");
+    printf("INTERPOLATION_TEXT: %s\n", valid_symbols[INTERPOLATION_TEXT] ? "true" : "false");
+    printf("END_OF_FILE: %s\n", valid_symbols[END_OF_FILE] ? "true" : "false");
+    printf("ERROR: %s\n", valid_symbols[ERROR] ? "true" : "false");
+    // clang-format on
     Scanner *scanner = (Scanner *)payload;
     if (valid_symbols[ERROR]) {
+        printf("return ERROR\n");
         lexer->result_symbol = ERROR;
         return false;
     }
@@ -200,6 +207,7 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
         if (lexer->eof(lexer)) {
             lexer->result_symbol = END_OF_FILE;
             lexer->mark_end(lexer);
+            printf("return EOF\n");
             return true;
         }
     }
@@ -208,6 +216,7 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
         // the extra space is mandatory
         if (match(lexer, "import ")) {
             lexer->result_symbol = IMPORT_START;
+            printf("return IMPORT_START\n");
             return true;
         }
     }
@@ -218,10 +227,12 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
             advance(lexer);
             // consume next char
             advance(lexer);
+            printf("return backslash\n");
             return false;
         } else if (lexer->lookahead == '{') {
             advance(lexer);
             lexer->result_symbol = INTERPOLATION_START;
+            printf("return INTERP_START\n");
             return true;
         }
     }
@@ -230,9 +241,11 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
         // scan until the interpolation ends
         if (lexer->lookahead == '}') {
             // let the grammar figure out that INTERPOLATION_TEXT is not here
-            // instead
+            printf("return no INTERP_TEXT\n");
             return false;
         }
+        lexer->result_symbol = INTERPOLATION_TEXT;
+        printf("return INTERP_TEXT\n");
         return scan_js_expr(scanner, lexer);
     }
 
@@ -240,5 +253,6 @@ bool tree_sitter_mdx_external_scanner_scan(void *payload, TSLexer *lexer,
     //   return false;
     // }
     // s->indentation = 1;
+    printf("return nothing\n");
     return false;
 }

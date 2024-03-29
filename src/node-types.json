@@ -5,7 +5,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "end_of_line",
@@ -44,6 +44,10 @@
           "named": true
         },
         {
+          "type": "jsx_string",
+          "named": true
+        },
+        {
           "type": "left_brace",
           "named": true
         },
@@ -53,10 +57,6 @@
         },
         {
           "type": "semicolon",
-          "named": true
-        },
-        {
-          "type": "string",
           "named": true
         }
       ]
@@ -118,6 +118,30 @@
     }
   },
   {
+    "type": "jsx_string",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "backtick_quoted_string",
+            "named": true
+          },
+          {
+            "type": "double_quoted_string",
+            "named": true
+          },
+          {
+            "type": "single_quoted_string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "markdown_section",
     "named": true,
     "fields": {},
@@ -142,30 +166,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "string",
-    "named": true,
-    "fields": {
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "backtick_quoted_string",
-            "named": true
-          },
-          {
-            "type": "double_quoted_string",
-            "named": true
-          },
-          {
-            "type": "single_quoted_string",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
