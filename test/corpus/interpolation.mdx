@@ -5,6 +5,15 @@ Zero-width interpolation
 
 ----
 
+(document
+  (markdown_section
+    (interpolation
+      (interpolation_start)
+      (interpolation_end))
+    (new_line))
+  (new_line
+    (eof)))
+
 =====
 Interpolation with empty body
 =====
@@ -12,14 +21,36 @@ Interpolation with empty body
 
 ----
 
+(document
+  (markdown_section
+    (interpolation
+      (interpolation_start)
+      (interpolation_content)
+      (interpolation_end))
+    (new_line))
+  (new_line
+    (eof)))
+
 =====
 Interpolation
 =====
+{asdf} asdfasdfasdf
 {asdf}
-{}
-{c}
-{o}
-{n}
+
 ----
 
-
+(document
+  (markdown_section
+    (interpolation
+      (interpolation_start)
+      (interpolation_content)
+      (interpolation_end))
+    (markdown_word)
+    (new_line)
+    (interpolation
+      (interpolation_start)
+      (interpolation_content)
+      (interpolation_end))
+    (new_line))
+  (new_line
+    (eof)))

@@ -5,7 +5,7 @@ module.exports = grammar({
   precedences: ($) => [
     [$.jsx_section, $.markdown_section],
     [$.escaped_slash, $.interpolation, $.markdown_word],
-    [$.end_of_line, $.interpolation_start],
+    [$.new_line, $.interpolation_start],
   ],
   externals: ($) => [
     $.import_start,
@@ -16,19 +16,9 @@ module.exports = grammar({
   ],
   // any non-newline whitespace
   extras: ($) => [/[^/S/r/n]+/],
-  // word: ($) => $._word,
   rules: {
     document: ($) =>
-      seq(
-        optional(choice($.jsx_section, $.markdown_section)),
-        repeat(
-          seq(
-            $.new_line,
-            repeat1($.new_line),
-            choice($.jsx_section, $.markdown_section),
-          ),
-        ),
-      ),
+      repeat(seq(choice($.jsx_section, $.markdown_section), $.new_line)),
     jsx_section: ($) =>
       repeat1(
         seq(
@@ -38,9 +28,11 @@ module.exports = grammar({
       ),
     // 1 or more non-empty lines
     markdown_section: ($) =>
-      seq(
-        repeat1(choice($.escaped_slash, $.interpolation, $.markdown_word)),
-        $.new_line,
+      repeat1(
+        seq(
+          repeat1(choice($.escaped_slash, $.interpolation, $.markdown_word)),
+          $.new_line,
+        ),
       ),
     interpolation: ($) =>
       seq(
@@ -69,7 +61,7 @@ module.exports = grammar({
           ),
         ),
         $.jsx_string,
-        alias(/;/, $.semicolon),
+        optional(alias(/;/, $.semicolon)),
       ),
     // TODO
     html_component: ($) => choice(),
@@ -89,9 +81,8 @@ module.exports = grammar({
     backtick_quoted_string: ($) => /`.*`/,
 
     // taken from markdown
-    new_line: ($) => token.immediate(/\n|\r\n/),
+    new_line: ($) => choice(token.immediate(/\n|\r\n/), $.eof),
     // fallback: (_) => prec.dynamic(-100, "_"),
-    // _horizontal_whitespace: $ => token.immediate(/[^/S/r/n]+/),
-    _word: ($) => /[/S]+/,
+    _whitespace: ($) => token.immediate(/[^/S/r/n]+/),
   },
 });

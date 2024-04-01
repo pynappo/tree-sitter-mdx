@@ -10,13 +10,9 @@ import Button from '../components/Button.astro';
     (import_statement
       (import_start)
       (jsx_identifier)
-      (string
+      (jsx_string
         (single_quoted_string))
       (semicolon))
-    (end_of_line)))
-
-=============
-Import within markdown paragraph
-============
-
-import Button from '../components/';
+    (new_line))
+  (new_line
+    (eof)))

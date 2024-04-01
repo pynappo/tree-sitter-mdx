@@ -2,7 +2,7 @@
   "name": "tree-sitter-mdx",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "bindings/node",
   "types": "bindings/node",
   "tree-sitter": [
     {
