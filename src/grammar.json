@@ -67,7 +67,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "escaped_slash"
+                  "name": "escaped_char"
                 },
                 {
                   "type": "SYMBOL",
@@ -119,11 +119,30 @@
     },
     "markdown_word": {
       "type": "PATTERN",
-      "value": "[\\S][^\\{\\s\\r\\n]+"
+      "value": "[^\\\\\\{\\s\\r\\n]+"
     },
-    "escaped_slash": {
-      "type": "PATTERN",
-      "value": "\\\\\\{"
+    "escaped_char": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "escape"
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\s]"
+          }
+        }
+      ]
+    },
+    "escape": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "\\\\"
+      }
     },
     "import_statement": {
       "type": "SEQ",
@@ -243,40 +262,7 @@
     },
     "jsx_identifier": {
       "type": "PATTERN",
-      "value": "[$a-zA-z_]+[A-Za-z_0-9$]*"
-    },
-    "jsx_string": {
-      "type": "FIELD",
-      "name": "type",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "double_quoted_string"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "single_quoted_string"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "backtick_quoted_string"
-          }
-        ]
-      }
-    },
-    "double_quoted_string": {
-      "type": "PATTERN",
-      "value": "\".*\""
-    },
-    "single_quoted_string": {
-      "type": "PATTERN",
-      "value": "'.*'"
-    },
-    "backtick_quoted_string": {
-      "type": "PATTERN",
-      "value": "`.*`"
+      "value": "[$a-zA-z_][A-Za-z_0-9$]*"
     },
     "new_line": {
       "type": "CHOICE",
@@ -323,7 +309,7 @@
     [
       {
         "type": "SYMBOL",
-        "name": "escaped_slash"
+        "name": "escaped_char"
       },
       {
         "type": "SYMBOL",
@@ -361,6 +347,10 @@
     {
       "type": "SYMBOL",
       "name": "eof"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "jsx_string"
     },
     {
       "type": "SYMBOL",

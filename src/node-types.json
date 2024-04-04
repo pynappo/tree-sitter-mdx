@@ -23,6 +23,21 @@
     }
   },
   {
+    "type": "escaped_char",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "escape",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "html_component",
     "named": true,
     "fields": {}
@@ -118,30 +133,6 @@
     }
   },
   {
-    "type": "jsx_string",
-    "named": true,
-    "fields": {
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "backtick_quoted_string",
-            "named": true
-          },
-          {
-            "type": "double_quoted_string",
-            "named": true
-          },
-          {
-            "type": "single_quoted_string",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "markdown_section",
     "named": true,
     "fields": {},
@@ -150,7 +141,7 @@
       "required": true,
       "types": [
         {
-          "type": "escaped_slash",
+          "type": "escaped_char",
           "named": true
         },
         {
@@ -188,19 +179,11 @@
     "named": false
   },
   {
-    "type": "backtick_quoted_string",
-    "named": true
-  },
-  {
-    "type": "double_quoted_string",
-    "named": true
-  },
-  {
     "type": "eof",
     "named": true
   },
   {
-    "type": "escaped_slash",
+    "type": "escape",
     "named": true
   },
   {
@@ -224,6 +207,10 @@
     "named": true
   },
   {
+    "type": "jsx_string",
+    "named": true
+  },
+  {
     "type": "left_brace",
     "named": true
   },
@@ -237,10 +224,6 @@
   },
   {
     "type": "semicolon",
-    "named": true
-  },
-  {
-    "type": "single_quoted_string",
     "named": true
   }
 ]

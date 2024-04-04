@@ -4,7 +4,7 @@ module.exports = grammar({
   conflicts: ($) => [],
   precedences: ($) => [
     [$.jsx_section, $.markdown_section],
-    [$.escaped_slash, $.interpolation, $.markdown_word],
+    [$.escaped_char, $.interpolation, $.markdown_word],
     [$.new_line, $.interpolation_start],
   ],
   externals: ($) => [
@@ -12,6 +12,7 @@ module.exports = grammar({
     $.interpolation_start,
     $.interpolation_content,
     $.eof,
+    $.jsx_string,
     $.error,
   ],
   // any non-newline whitespace
@@ -30,7 +31,7 @@ module.exports = grammar({
     markdown_section: ($) =>
       repeat1(
         seq(
-          repeat1(choice($.escaped_slash, $.interpolation, $.markdown_word)),
+          repeat1(choice($.escaped_char, $.interpolation, $.markdown_word)),
           $.new_line,
         ),
       ),
@@ -40,8 +41,9 @@ module.exports = grammar({
         optional($.interpolation_content), // let the scanner determine everything
         alias(/\}/, $.interpolation_end),
       ),
-    markdown_word: ($) => /[\S][^\{\s\r\n]+/,
-    escaped_slash: ($) => /\\\{/,
+    markdown_word: ($) => /[^\\\{\s\r\n]+/,
+    escaped_char: ($) => seq($.escape, token.immediate(/[^\s]/)),
+    escape: ($) => token.immediate(/\\/),
     import_statement: ($) =>
       seq(
         // import at the start of the line
@@ -66,19 +68,7 @@ module.exports = grammar({
     // TODO
     html_component: ($) => choice(),
     jsx_component: ($) => seq(/[^\\]</, /.+/, /[^\\]\/>/),
-    jsx_identifier: ($) => /[$a-zA-z_]+[A-Za-z_0-9$]*/,
-    jsx_string: ($) =>
-      field(
-        "type",
-        choice(
-          $.double_quoted_string,
-          $.single_quoted_string,
-          $.backtick_quoted_string,
-        ),
-      ),
-    double_quoted_string: ($) => /".*"/,
-    single_quoted_string: ($) => /'.*'/,
-    backtick_quoted_string: ($) => /`.*`/,
+    jsx_identifier: ($) => /[$a-zA-z_][A-Za-z_0-9$]*/,
 
     // taken from markdown
     new_line: ($) => choice(token.immediate(/\n|\r\n/), $.eof),

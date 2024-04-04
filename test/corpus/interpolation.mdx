@@ -54,3 +54,20 @@ Interpolation
     (new_line))
   (new_line
     (eof)))
+
+=====
+Escaped slash
+=====
+this should be escaped\\asdfasdf
+
+
+----
+
+(document
+  (markdown_section
+    (markdown_word)
+    (escaped_char
+      (escape))
+    (markdown_word)
+    (new_line))
+  (new_line))
